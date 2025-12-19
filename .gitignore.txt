@@ -1,0 +1,12 @@
+# Visual Studio
+.vs/
+backend/.vs/
+
+# .NET
+backend/bin/
+backend/obj/
+
+# Node/React
+frontend/node_modules/
+frontend/build/
+frontend/.env

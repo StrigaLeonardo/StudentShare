@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Controllers",
+    "\\DTOs",
+    "\\DTOs\\Auth",
+    "\\DTOs\\Roles",
+    "\\Models"
+  ],
+  "SelectedNode": "\\DTOs\\Roles\\UpdateRolesRequest.cs",
+  "PreviewInSolutionExplorer": false
+}

@@ -1,0 +1,135 @@
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+}
+.intro-wrapper h1 {
+  font-size: 6em;
+}
+
+.auth-modal-content {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card-elevated);
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.9);
+  padding: 28px 28px 24px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.close-btn:hover {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 4px;
+  background: #020617;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.tabs button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 8px 0;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.16s ease-out;
+}
+
+.tabs button.active {
+  background: #fefefe;
+  color: black;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.9);
+}
+.login-form,
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-form input,
+.register-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: var(--input-bg);
+  color: var(--text-main);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.login-form input::placeholder,
+.register-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.login-form input:focus,
+.register-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+  background: #020617;
+}
+
+.login-form button,
+.register-form button {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: none;
+  background-color: var(--accent);
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out,
+    filter 0.12s ease-out;
+}
+
+.login-form button:hover,
+.register-form button:hover {
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+  filter: brightness(1.03);
+}
+
+.error {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--error);
+}
+
+.success {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #4ade80;
+}

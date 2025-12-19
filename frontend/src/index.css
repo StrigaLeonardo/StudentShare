@@ -1,0 +1,36 @@
+:root {
+  --bg: #020617;
+  --card-bg: #020617;
+  --card-elevated: #02091b;
+  --input-bg: #020617;
+  --border-subtle: #1e293b;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.18);
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --error: #f97373;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Roboto", sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+}
+
+.dashboard-shell {
+  display: flex;
+  min-height: calc(100vh - 64px); /* visina ekrana minus header */
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 16px 24px;
+}
