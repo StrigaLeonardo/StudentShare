@@ -1,4 +1,3 @@
-// src/components/Dashboard/DashboardHeader/DashboardHeader.jsx
 import "./DashboardHeader.css";
 import { MdHelpOutline, MdSettings } from "react-icons/md";
 

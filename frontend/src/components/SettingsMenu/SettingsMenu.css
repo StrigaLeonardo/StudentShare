@@ -1,5 +1,3 @@
-/* src/components/SettingsMenu.css */
-
 .settings-wrapper {
   display: flex;
   width: 100%;
@@ -7,6 +5,7 @@
   background-color: #181821;
   border-radius: 12px;
   border: 1px solid #1e293b;
+  margin-left: 14rem;
 }
 
 /* Sidebar */
@@ -26,6 +25,7 @@
   margin: 0 0 12px 0;
   font-size: 1em;
   font-weight: 600;
+  color: #fff;
 }
 
 /* Tab gumbi u sidebaru */
@@ -63,6 +63,7 @@
   margin-top: 0;
   margin-bottom: 8px;
   font-size: 20px;
+  color: #fff;
 }
 
 .settings-content p {

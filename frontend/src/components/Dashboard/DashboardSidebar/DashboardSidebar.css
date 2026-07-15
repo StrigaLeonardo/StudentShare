@@ -5,6 +5,11 @@
   padding: 12px 8px;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  top: 6rem;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
 }
 
 .sidebar-nav {

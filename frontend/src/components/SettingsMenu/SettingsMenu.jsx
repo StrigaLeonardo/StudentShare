@@ -1,4 +1,3 @@
-// src/components/SettingsMenu/SettingsMenu.jsx
 import React, { useState } from "react";
 import "./SettingsMenu.css";
 
@@ -30,7 +29,6 @@ const SettingsMenu = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          // backend očekuje List<string> Roles
           roles: [selectedRole], // "student" ili "teacher"
         }),
       });

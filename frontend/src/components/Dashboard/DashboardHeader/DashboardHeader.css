@@ -8,6 +8,9 @@
   background-color: #020617;
   border-bottom: 1px solid #333;
   color: #f9fafb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .dh-left h1 {

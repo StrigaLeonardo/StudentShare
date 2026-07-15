@@ -1,29 +1,54 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StudentDrive.Api.Data;
+using StudentDrive.Api.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS za frontend na localhost:3000
-var allowedOrigin = "http://localhost:3000";
+var storageRoot = builder.Configuration["Storage:RootPath"]
+                  ?? "/home/leonardo/Server/StudentDriveStorage";
+
+builder.Services.Configure<StorageOptions>(options =>
+{
+    options.RootPath = storageRoot;
+});
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(connectionString);
+});
+
+var allowedOrigin = builder.Configuration["Frontend:Url"] ?? "http://localhost:3000";
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendCors", policy =>
     {
-        policy.WithOrigins(allowedOrigin)
+        policy.WithOrigins(allowedOrigin) 
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .WithExposedHeaders("Content-Range", "Content-Length", "Accept-Ranges");
     });
 });
 
-// JWT config
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "very_secret_dev_key_change_later";
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException("JWT Key is not configured!");
+}
+
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "studentdrive";
 var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
 
-// Services
-builder.Services.AddControllers();
+if (keyBytes.Length < 32)
+{
+    throw new InvalidOperationException("JWT Key must be at least 32 characters long!");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -39,18 +64,18 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+        ValidAudience = jwtIssuer, 
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+        ClockSkew = TimeSpan.FromMinutes(5) 
     };
 });
 
-// Swagger – samo osnovno, bez OpenApi* tipova
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// CORS mora biti prije auth/autorizacije
-app.UseCors("FrontendCors");
 
 if (app.Environment.IsDevelopment())
 {
@@ -59,10 +84,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("FrontendCors");  
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

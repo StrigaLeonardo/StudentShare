@@ -1,3 +1,6 @@
+using StudentDrive.Api.Models.FileSystem;
+using System.Collections.Generic;
+
 namespace StudentDrive.Api.Models;
 
 public class User
@@ -7,4 +10,7 @@ public class User
     public string PasswordHash { get; set; } = default!;
     public string FullName { get; set; } = default!;
     public DateTime CreatedAt { get; set; }
+
+    public ICollection<Folder> Folders { get; set; } = new List<Folder>();
+    public ICollection<FileEntity> Files { get; set; } = new List<FileEntity>();
 }

@@ -5,6 +5,7 @@ import DashboardHeader from "./components/Dashboard/DashboardHeader/DashboardHea
 import DashboardSidebar from "./components/Dashboard/DashboardSidebar/DashboardSidebar";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import MojShare from "./components/Dashboard/MojShare/MojShare";
+import Otpad from "./components/Dashboard/Otpad/Otpad";
 
 function App() {
   const [showAuthModal, setShowAuthModal] = useState(true);
@@ -34,7 +35,6 @@ function App() {
     setProfileOpen((prev) => !prev);
   }
 
-  // NOVO: poziva se iz AuthModal kad login prođe
   function handleLoginSuccess(fullName) {
     setUserName(fullName || "Student");
     setShowAuthModal(false);
@@ -74,6 +74,8 @@ function App() {
                 <SettingsMenu />
               ) : activeSection === "my-share" ? (
                 <MojShare />
+              ) : activeSection === "trash" ? (
+                <Otpad />
               ) : (
                 <div>Dashboard sadržaj</div>
               )}
