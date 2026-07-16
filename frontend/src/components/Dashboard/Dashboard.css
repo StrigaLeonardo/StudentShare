@@ -1,0 +1,25 @@
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  height: 100vh;
+  background-color: #0f172a;
+  overflow: hidden;
+}
+
+.dashboard-sidebar-shell {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid #1e293b;
+  background-color: #020617;
+}
+
+.dashboard-main {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  padding: 1.5rem;
+  background-color: #0f172a;
+}

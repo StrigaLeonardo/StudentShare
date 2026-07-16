@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DashboardSidebar from "./DashboardSidebar";
 import MojShare from "./MojShare/MojShare";
 import Otpad from "./Otpad/Otpad";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("my-share");
@@ -12,7 +13,6 @@ const Dashboard = () => {
         return <MojShare />;
       case "trash":
         return <Otpad />;
-
       default:
         return <MojShare />;
     }
@@ -20,7 +20,10 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      <DashboardSidebar active={activeSection} onChange={setActiveSection} />
+      <div className="dashboard-sidebar-shell">
+        <DashboardSidebar active={activeSection} onChange={setActiveSection} />
+      </div>
+
       <main className="dashboard-main">{renderContent()}</main>
     </div>
   );

@@ -15,6 +15,7 @@ import useClickOutside from "../../../utils/useClickOutside";
 import ConfirmModal from "./ConfirmModal";
 import SelectionToolbar from "../MojShare/SelectionToolbar";
 import useSelection from "../../../utils/useSelection";
+import DashboardPage from "../../Layout/DashboardPage";
 
 import "../MojShare/MojShare.css";
 import "./Otpad.css";
@@ -67,7 +68,7 @@ const Otpad = () => {
       setShowMainMenu(false);
       setShowSortMenu(false);
       setRowMenuOpenId(null);
-    }
+    },
   );
 
   const sortedItems = sortFiles(items, { sortBy, sortDir, foldersPosition });
@@ -79,8 +80,9 @@ const Otpad = () => {
   }, [items, selectedKeys]);
 
   const handleRowClick = (e, rowKey) => {
-    if (e?.target?.closest?.(".mojshare-row-menu, .mojshare-row-menu-btn"))
+    if (e?.target?.closest?.(".mojshare-row-menu, .mojshare-row-menu-btn")) {
       return;
+    }
     toggleOne(rowKey);
   };
 
@@ -101,7 +103,7 @@ const Otpad = () => {
       clearSelection();
       await fetchTrashItems(
         currentFolder?.id ?? null,
-        currentFolder?.name ?? null
+        currentFolder?.name ?? null,
       );
     } catch (err) {
       setError("Vraćanje nije uspjelo.");
@@ -120,7 +122,7 @@ const Otpad = () => {
       clearSelection();
       await fetchTrashItems(
         currentFolder?.id ?? null,
-        currentFolder?.name ?? null
+        currentFolder?.name ?? null,
       );
     } catch (err) {
       setError("Brisanje nije uspjelo.");
@@ -148,82 +150,85 @@ const Otpad = () => {
     }
   };
 
-  return (
-    <div className="mojshare-wrapper">
-      <div ref={menuRef}>
-        <div className="mojshare-header">
+  const pageHeader = (
+    <div className="mojshare-header" ref={menuRef}>
+      <button
+        type="button"
+        className="mojshare-title-btn"
+        onClick={() => setShowMainMenu((prev) => !prev)}
+      >
+        <span
+          className="mojshare-breadcrumb"
+          onClick={(e) => {
+            e.stopPropagation();
+            fetchTrashItems(null, null);
+            clearSelection();
+          }}
+        >
+          Otpad
+          {currentFolder && currentFolder.name
+            ? ` / ${currentFolder.name}`
+            : ""}
+        </span>
+
+        <MdKeyboardArrowDown
+          className={
+            showMainMenu
+              ? "mojshare-title-chevron mojshare-title-chevron--open"
+              : "mojshare-title-chevron"
+          }
+        />
+      </button>
+
+      <SelectionToolbar
+        stats={stats}
+        selectedItems={selectedItems}
+        onClear={clearSelection}
+        onSuccess={(msg) => {
+          setInfo(msg);
+          setError(null);
+        }}
+        onError={(msg) => {
+          setError(msg);
+          setInfo(null);
+        }}
+        type="trash"
+        API_BASE={API_BASE}
+        refreshList={() =>
+          fetchTrashItems(
+            currentFolder?.id ?? null,
+            currentFolder?.name ?? null,
+          )
+        }
+      />
+
+      {showMainMenu && (
+        <div className="mojshare-main-menu">
           <button
             type="button"
-            className="mojshare-title-btn"
-            onClick={() => setShowMainMenu((prev) => !prev)}
+            onClick={() => {
+              setShowEmptyTrashModal(true);
+              setShowMainMenu(false);
+            }}
           >
-            <span
-              className="mojshare-breadcrumb"
-              onClick={(e) => {
-                e.stopPropagation();
-                fetchTrashItems(null, null);
-                clearSelection();
-              }}
-            >
-              Otpad
-              {currentFolder && currentFolder.name
-                ? ` / ${currentFolder.name}`
-                : ""}
-            </span>
-
-            <MdKeyboardArrowDown
-              className={
-                showMainMenu
-                  ? "mojshare-title-chevron mojshare-title-chevron--open"
-                  : "mojshare-title-chevron"
-              }
-            />
+            Isprazni otpad
           </button>
-
-          <SelectionToolbar
-            stats={stats}
-            selectedItems={selectedItems}
-            onClear={clearSelection}
-            onSuccess={(msg) => {
-              setInfo(msg);
-              setError(null);
-            }}
-            onError={(msg) => {
-              setError(msg);
-              setInfo(null);
-            }}
-            type="trash"
-            API_BASE={API_BASE}
-            refreshList={() =>
-              fetchTrashItems(
-                currentFolder?.id ?? null,
-                currentFolder?.name ?? null
-              )
-            }
-          />
-
-          {showMainMenu && (
-            <div className="mojshare-main-menu">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowEmptyTrashModal(true);
-                  setShowMainMenu(false);
-                }}
-              >
-                Isprazni otpad
-              </button>
-            </div>
-          )}
         </div>
+      )}
+    </div>
+  );
 
-        {(error || info) && (
-          <div className="mojshare-status">
-            {error && <span className="mojshare-status-error">{error}</span>}
-            {info && <span className="mojshare-status-success">{info}</span>}
-          </div>
-        )}
+  const pageStatus =
+    error || info ? (
+      <div className="mojshare-status">
+        {error && <span className="mojshare-status-error">{error}</span>}
+        {info && <span className="mojshare-status-success">{info}</span>}
+      </div>
+    ) : null;
 
+  return (
+    <div className="mojshare-wrapper">
+      <DashboardPage header={pageHeader} status={pageStatus}>
         <div className="mojshare-table-wrapper">
           <table className="mojshare-table">
             <thead>
@@ -273,7 +278,7 @@ const Otpad = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </DashboardPage>
 
       <ConfirmModal
         isOpen={!!deleteTarget}

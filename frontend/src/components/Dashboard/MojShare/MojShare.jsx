@@ -16,6 +16,7 @@ import RenameModal from "./RenameModal";
 import NewFolderModal from "./NewFolderModal";
 import { useCreateFolder } from "../../../utils/useCreateFolder";
 import DocumentViewer from "../../DocumentViewer/DocumentViewer";
+import DashboardPage from "../../Layout/DashboardPage";
 
 import "./MojShare.css";
 
@@ -84,7 +85,7 @@ const MojShare = () => {
 
       const itemsToMove = keys.map((key) => {
         const [type, id] = key.split("-");
-        return { type, id: parseInt(id) };
+        return { type, id: parseInt(id, 10) };
       });
 
       const response = await fetch(`${API_BASE}/api/files/move`, {
@@ -118,7 +119,7 @@ const MojShare = () => {
   useClickOutside(mainMenuRef, showMainMenu, () => setShowMainMenu(false));
   useClickOutside(sortMenuRef, showSortMenu, () => setShowSortMenu(false));
   useClickOutside(tableRef, rowMenuOpenId !== null, () =>
-    setRowMenuOpenId(null)
+    setRowMenuOpenId(null),
   );
 
   useEffect(() => {
@@ -164,7 +165,7 @@ const MojShare = () => {
       if (res.ok) {
         await fetchItems(
           currentFolder?.id ?? null,
-          currentFolder?.name ?? null
+          currentFolder?.name ?? null,
         );
       }
     } catch (err) {
@@ -173,15 +174,11 @@ const MojShare = () => {
   };
 
   const openFileDialog = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    fileInputRef.current?.click();
   };
 
   const openFolderDialog = () => {
-    if (folderInputRef.current) {
-      folderInputRef.current.click();
-    }
+    folderInputRef.current?.click();
   };
 
   const handleRowDoubleClick = (item) => {
@@ -196,18 +193,138 @@ const MojShare = () => {
     fetchItems(null, null);
   };
 
+  const pageHeader = (
+    <div className="mojshare-header" ref={mainMenuRef}>
+      <button
+        type="button"
+        className="mojshare-title-btn"
+        onClick={() => setShowMainMenu((prev) => !prev)}
+      >
+        <span
+          className="mojshare-breadcrumb"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleBreadcrumbRootClick();
+          }}
+        >
+          Moj Share
+          {currentFolder && currentFolder.name
+            ? ` / ${currentFolder.name}`
+            : ""}
+        </span>
+
+        <MdKeyboardArrowDown
+          className={
+            showMainMenu
+              ? "mojshare-title-chevron mojshare-title-chevron--open"
+              : "mojshare-title-chevron"
+          }
+        />
+      </button>
+
+      {showMainMenu && (
+        <div className="mojshare-main-menu">
+          <button
+            type="button"
+            onClick={() => {
+              setNewFolderName("");
+              setShowNewFolderModal(true);
+              setShowMainMenu(false);
+            }}
+          >
+            Kreiraj mapu
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              openFileDialog();
+              setShowMainMenu(false);
+            }}
+          >
+            Prijenos datoteka
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              openFolderDialog();
+              setShowMainMenu(false);
+            }}
+          >
+            Prijenos mape
+          </button>
+        </div>
+      )}
+
+      <SelectionToolbar
+        stats={getSelectionStats(sortedFiles)}
+        onClear={clearSelection}
+        onDownloadAll={async () => {
+          const selectedItems = selectedKeys
+            .map((key) => {
+              const [type, id] = key.split("-");
+              return sortedFiles.find(
+                (item) => item.type === type && item.id === Number(id),
+              );
+            })
+            .filter(Boolean);
+
+          for (const item of selectedItems) {
+            try {
+              await handleDownload(item);
+            } catch (err) {
+              console.error("Download failed for", item.name, err);
+            }
+          }
+        }}
+        onMoveAllToTrash={async () => {
+          const selectedItems = selectedKeys
+            .map((key) => {
+              const [type, id] = key.split("-");
+              return sortedFiles.find(
+                (item) => item.type === type && item.id === Number(id),
+              );
+            })
+            .filter(Boolean);
+
+          for (const item of selectedItems) {
+            try {
+              await handleMoveToTrash(item);
+            } catch (err) {
+              console.error("Move to trash failed for", item.name, err);
+            }
+          }
+
+          clearSelection();
+        }}
+      />
+    </div>
+  );
+
+  const pageStatus =
+    uploading || error || success ? (
+      <div className="mojshare-status">
+        {uploading && <span>Prijenos u tijeku...</span>}
+        {error && <span className="mojshare-status-error">{error}</span>}
+        {success && <span className="mojshare-status-success">{success}</span>}
+      </div>
+    ) : null;
+
   return (
     <div
       className={`mojshare-wrapper ${isDragging ? "mojshare-dragging" : ""}`}
       {...dragHandlers}
       onDrop={(e) => {
         const hasFileFromPC = Array.from(e.dataTransfer.items).some(
-          (item) => item.kind === "file"
+          (item) => item.kind === "file",
         );
+
         if (!hasFileFromPC) {
           handleDropToRoot(e);
           return;
         }
+
         dragHandlers.onDrop(e);
       }}
     >
@@ -219,119 +336,7 @@ const MojShare = () => {
         </div>
       )}
 
-      <div>
-        <div className="mojshare-header" ref={mainMenuRef}>
-          <button
-            type="button"
-            className="mojshare-title-btn"
-            onClick={() => setShowMainMenu((prev) => !prev)}
-          >
-            <span
-              className="mojshare-breadcrumb"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleBreadcrumbRootClick();
-              }}
-            >
-              Moj Share
-              {currentFolder && currentFolder.name
-                ? ` / ${currentFolder.name}`
-                : ""}
-            </span>
-            <MdKeyboardArrowDown
-              className={
-                showMainMenu
-                  ? "mojshare-title-chevron mojshare-title-chevron--open"
-                  : "mojshare-title-chevron"
-              }
-            />
-          </button>
-          {showMainMenu && (
-            <div className="mojshare-main-menu">
-              <button
-                type="button"
-                onClick={() => {
-                  setNewFolderName("");
-                  setShowNewFolderModal(true);
-                  setShowMainMenu(false);
-                }}
-              >
-                Kreiraj mapu
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  openFileDialog();
-                  setShowMainMenu(false);
-                }}
-              >
-                Prijenos datoteka
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  openFolderDialog();
-                  setShowMainMenu(false);
-                }}
-              >
-                Prijenos mape
-              </button>
-            </div>
-          )}
-          <SelectionToolbar
-            stats={getSelectionStats(sortedFiles)}
-            onClear={clearSelection}
-            onDownloadAll={async () => {
-              const selectedItems = selectedKeys
-                .map((key) => {
-                  const [type, id] = key.split("-");
-                  return sortedFiles.find(
-                    (item) => item.type === type && item.id === Number(id)
-                  );
-                })
-                .filter(Boolean);
-
-              for (const item of selectedItems) {
-                try {
-                  await handleDownload(item);
-                } catch (err) {
-                  console.error("Download failed for", item.name, err);
-                }
-              }
-            }}
-            onMoveAllToTrash={async () => {
-              const selectedItems = selectedKeys
-                .map((key) => {
-                  const [type, id] = key.split("-");
-                  return sortedFiles.find(
-                    (item) => item.type === type && item.id === Number(id)
-                  );
-                })
-                .filter(Boolean);
-
-              for (const item of selectedItems) {
-                try {
-                  await handleMoveToTrash(item);
-                } catch (err) {
-                  console.error("Move to trash failed for", item.name, err);
-                }
-              }
-
-              clearSelection();
-            }}
-          />
-        </div>
-
-        {(uploading || error || success) && (
-          <div className="mojshare-status">
-            {uploading && <span>Prijenos u tijeku...</span>}
-            {error && <span className="mojshare-status-error">{error}</span>}
-            {success && (
-              <span className="mojshare-status-success">{success}</span>
-            )}
-          </div>
-        )}
-
+      <DashboardPage header={pageHeader} status={pageStatus}>
         <input
           type="file"
           ref={fileInputRef}
@@ -363,6 +368,7 @@ const MojShare = () => {
                 setShowSortMenu={setShowSortMenu}
               />
             </thead>
+
             <tbody>
               {sortedFiles.length === 0 ? (
                 <tr>
@@ -404,7 +410,7 @@ const MojShare = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </DashboardPage>
 
       <RenameModal
         isOpen={!!renameTarget}
