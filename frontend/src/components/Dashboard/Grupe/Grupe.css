@@ -1,0 +1,132 @@
+.grupe-action-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background-color: #364968;
+  color: #e5e7eb;
+  border-radius: 999px;
+  border: 1px solid #ffffff;
+  white-space: nowrap;
+}
+
+.grupe-action-btn {
+  padding: 6px 12px;
+}
+
+.grupe-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.grupe-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+  background-color: #020617;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.grupe-card:hover {
+  background-color: #0b1120;
+  border-color: #334155;
+}
+
+.grupe-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.grupe-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #1e293b;
+  color: #93c5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.grupe-card-menu-anchor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grupe-card-menu {
+  top: calc(100% + 10px);
+  right: 0;
+  transform: none;
+}
+
+.grupe-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.grupe-card-body h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.grupe-card-body p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.grupe-card-meta {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #1e293b;
+}
+
+.grupe-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.grupe-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 14px;
+}
+
+.grupe-manage-btn {
+  border: none;
+  background: transparent;
+  color: #7dd3fc;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 999px;
+  transition: all 0.15s ease;
+}
+
+.grupe-manage-btn:hover {
+  background-color: #111827;
+  color: #bae6fd;
+}

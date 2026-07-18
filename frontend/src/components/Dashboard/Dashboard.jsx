@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DashboardSidebar from "./DashboardSidebar";
 import MojShare from "./MojShare/MojShare";
 import Otpad from "./Otpad/Otpad";
+import Grupe from "./Grupe/Grupe";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -11,6 +12,8 @@ const Dashboard = () => {
     switch (activeSection) {
       case "my-share":
         return <MojShare />;
+      case "groups":
+        return <Grupe />;
       case "trash":
         return <Otpad />;
       default:

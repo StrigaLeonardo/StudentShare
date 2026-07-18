@@ -6,6 +6,7 @@ import DashboardSidebar from "./components/Dashboard/DashboardSidebar/DashboardS
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import MojShare from "./components/Dashboard/MojShare/MojShare";
 import Otpad from "./components/Dashboard/Otpad/Otpad";
+import Grupe from "./components/Dashboard/Grupe/Grupe";
 
 function App() {
   const [showAuthModal, setShowAuthModal] = useState(true);
@@ -74,6 +75,8 @@ function App() {
                 <SettingsMenu />
               ) : activeSection === "my-share" ? (
                 <MojShare />
+              ) : activeSection === "groups" ? (
+                <Grupe />
               ) : activeSection === "trash" ? (
                 <Otpad />
               ) : (

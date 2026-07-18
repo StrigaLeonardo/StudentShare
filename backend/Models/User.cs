@@ -13,4 +13,7 @@ public class User
 
     public ICollection<Folder> Folders { get; set; } = new List<Folder>();
     public ICollection<FileEntity> Files { get; set; } = new List<FileEntity>();
+
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
 }
