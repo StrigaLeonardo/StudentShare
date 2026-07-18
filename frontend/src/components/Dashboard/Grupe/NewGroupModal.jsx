@@ -3,7 +3,13 @@ import { MdClose, MdOutlineAutoStories } from "react-icons/md";
 import "./NewGroupModal.css";
 import { GROUP_ICON_OPTIONS, DEFAULT_GROUP_ICON_KEY } from "./GroupIcons";
 
-const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
+const NewGroupModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  mode = "create",
+  initialData = null,
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -25,6 +31,12 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
 
+    setFormData({
+      name: initialData?.title ?? "",
+      description: initialData?.description ?? "",
+      icon_key: initialData?.icon_key ?? DEFAULT_GROUP_ICON_KEY,
+    });
+
     setTimeout(() => {
       nameInputRef.current?.focus();
     }, 0);
@@ -33,9 +45,11 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, initialData]);
 
   if (!isOpen) return null;
+
+  const isEditMode = mode === "edit";
 
   const handleBackdropClick = (e) => {
     if (e.target === dialogRef.current) {
@@ -57,16 +71,19 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
     if (!formData.name.trim()) return;
 
     onSubmit?.({
+      id: initialData?.id,
       name: formData.name.trim(),
       description: formData.description.trim(),
       icon_key: formData.icon_key,
     });
 
-    setFormData({
-      name: "",
-      description: "",
-      icon_key: DEFAULT_GROUP_ICON_KEY,
-    });
+    if (!isEditMode) {
+      setFormData({
+        name: "",
+        description: "",
+        icon_key: DEFAULT_GROUP_ICON_KEY,
+      });
+    }
 
     onClose();
   };
@@ -81,7 +98,7 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
         className="group-modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="new-group-modal-title"
+        aria-labelledby="group-modal-title"
       >
         <div className="group-modal-header">
           <div className="group-modal-title-wrap">
@@ -89,8 +106,14 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
               <MdOutlineAutoStories size={20} />
             </div>
             <div>
-              <h2 id="new-group-modal-title">Kreiraj grupu</h2>
-              <p>Unesi podatke za novu grupu.</p>
+              <h2 id="group-modal-title">
+                {isEditMode ? "Uredi grupu" : "Kreiraj grupu"}
+              </h2>
+              <p>
+                {isEditMode
+                  ? "Uredi podatke postojeće grupe."
+                  : "Unesi podatke za novu grupu."}
+              </p>
             </div>
           </div>
 
@@ -106,7 +129,7 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
 
         <form className="group-modal-form" onSubmit={handleSubmit}>
           <div className="group-modal-field">
-            <label htmlFor="group-name">Naziv </label>
+            <label htmlFor="group-name">Naziv</label>
             <input
               id="group-name"
               name="name"
@@ -172,7 +195,7 @@ const NewGroupModal = ({ isOpen, onClose, onSubmit }) => {
               type="submit"
               className="group-modal-btn group-modal-btn-primary"
             >
-              Kreiraj grupu
+              {isEditMode ? "Spremi promjene" : "Kreiraj grupu"}
             </button>
           </div>
         </form>

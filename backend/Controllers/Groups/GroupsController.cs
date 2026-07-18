@@ -128,4 +128,86 @@ public class GroupsController : ControllerBase
             studentsCount = 0
         });
     }
+
+    // PUT /api/groups/{id} -> uređivanje postojeće grupe
+    [Authorize]
+    [HttpPut("{id:long}")]
+    public async Task<ActionResult<object>> UpdateGroup(long id, [FromBody] UpdateGroupRequest request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (!TryGetUserId(out var userId))
+            return BadRequest("Invalid user id in token.");
+
+        var roleNames = await _context.UserRoles
+            .Where(ur => ur.user_id == userId)
+            .Select(ur => ur.Role.name)
+            .ToListAsync();
+
+        var isProfessor = roleNames.Any(r => r.Equals("teacher", StringComparison.OrdinalIgnoreCase));
+
+        if (!isProfessor)
+            return Forbid();
+
+        var group = await _context.Groups
+            .Include(g => g.UserGroups)
+            .FirstOrDefaultAsync(g => g.id == id);
+
+        if (group == null)
+            return NotFound("Grupa nije pronađena.");
+
+        if (group.created_by != userId)
+            return Forbid();
+
+        group.name = request.name.Trim();
+        group.description = request.description?.Trim();
+        group.icon_key = request.icon_key.Trim();
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            id = group.id,
+            name = group.name,
+            description = group.description,
+            created_by = group.created_by,
+            created_at = group.created_at,
+            icon_key = group.icon_key,
+            studentsCount = group.UserGroups.Count(ug => ug.role_in_group == "student")
+        });
+    }
+
+    // DELETE /api/groups/{id} -> brisanje postojeće grupe
+    [Authorize]
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> DeleteGroup(long id)
+    {
+        if (!TryGetUserId(out var userId))
+            return BadRequest("Invalid user id in token.");
+
+        var roleNames = await _context.UserRoles
+            .Where(ur => ur.user_id == userId)
+            .Select(ur => ur.Role.name)
+            .ToListAsync();
+
+        var isProfessor = roleNames.Any(r => r.Equals("teacher", StringComparison.OrdinalIgnoreCase));
+
+        if (!isProfessor)
+            return Forbid();
+
+        var group = await _context.Groups
+            .FirstOrDefaultAsync(g => g.id == id);
+
+        if (group == null)
+            return NotFound("Grupa nije pronađena.");
+
+        if (group.created_by != userId)
+            return Forbid();
+
+        _context.Groups.Remove(group);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

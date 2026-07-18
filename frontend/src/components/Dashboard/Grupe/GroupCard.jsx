@@ -7,7 +7,13 @@ import {
   MdDeleteOutline,
 } from "react-icons/md";
 
-const GroupCard = ({ group, isMenuOpen, onToggleMenu }) => {
+const GroupCard = ({
+  group,
+  isMenuOpen,
+  onToggleMenu,
+  onEditGroup,
+  onDeleteGroup,
+}) => {
   const Icon = group.icon;
 
   return (
@@ -28,17 +34,16 @@ const GroupCard = ({ group, isMenuOpen, onToggleMenu }) => {
 
           {isMenuOpen && (
             <div className="mojshare-row-menu grupe-card-menu">
-              <button type="button">
+              <button type="button" onClick={() => onEditGroup?.(group)}>
                 <span className="mojshare-row-menu-label">Uredi grupu</span>
                 <MdEdit className="mojshare-row-menu-icon" />
               </button>
 
-              <button type="button">
-                <span className="mojshare-row-menu-label">Dodaj studenta</span>
-                <MdPersonAddAlt className="mojshare-row-menu-icon" />
-              </button>
-
-              <button type="button" className="danger">
+              <button
+                type="button"
+                className="danger"
+                onClick={() => onDeleteGroup?.(group)}
+              >
                 <span className="mojshare-row-menu-label">Obriši grupu</span>
                 <MdDeleteOutline className="mojshare-row-menu-icon" />
               </button>
